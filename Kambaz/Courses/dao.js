@@ -19,12 +19,6 @@ export default function CoursesDao(db) {
     return newCourse;
   }
 
-  function deleteCourse(courseId) {
-    const { courses, enrollments } = db;
-    db.courses = courses.filter((course) => course._id !== courseId);
-    db.enrollments = enrollments.filter((enrollment) => enrollment.course !== courseId);
-  }
-
   function updateCourse(courseId, courseUpdates) {
     const { courses } = db;
     const course = courses.find((course) => course._id === courseId);
@@ -32,11 +26,17 @@ export default function CoursesDao(db) {
     return course;
   }
 
+  function deleteCourse(courseId) {
+    const { courses, enrollments } = db;
+    db.courses = courses.filter((course) => course._id !== courseId);
+    db.enrollments = enrollments.filter((enrollment) => enrollment.course !== courseId);
+  }
+
   return {
     findAllCourses,
     findCoursesForEnrolledUser,
     createCourse,
-    deleteCourse,
     updateCourse,
+    deleteCourse,
    };
 }

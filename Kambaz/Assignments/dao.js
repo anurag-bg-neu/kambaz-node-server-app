@@ -13,11 +13,6 @@ export default function AssignmentsDao(db) {
     return newAssignment;
   }
 
-  function deleteAssignment(assignmentId) {
-    const { assignments } = db;
-    db.assignments = assignments.filter((assignment) => assignment._id !== assignmentId);
-  }
-
   function updateAssignment(assignmentId, assignmentUpdates) {
     const { assignments } = db;
     const assignment = assignments.find((assignment) => assignment._id === assignmentId);
@@ -25,10 +20,15 @@ export default function AssignmentsDao(db) {
     return assignment;
   }
 
+  function deleteAssignment(assignmentId) {
+    const { assignments } = db;
+    db.assignments = assignments.filter((assignment) => assignment._id !== assignmentId);
+  }
+
   return {
     findAssignmentsForCourse,
     createAssignment,
-    deleteAssignment,
     updateAssignment,
+    deleteAssignment,
    };
 }
