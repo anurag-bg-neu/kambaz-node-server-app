@@ -17,7 +17,7 @@ export default function EnrollmentsRoutes(app: Express, db: Database): void {
 
   const enrollUserInCourse = (req: Request, res: Response): void => {
     let userId = req.params.userId as string;
-    const { courseId } = req.body;
+    const courseId = req.params.courseId as string;
     if (userId === "current") {
       const currentUser = req.session.currentUser;
       if (!currentUser) { res.sendStatus(401); return; }
@@ -38,6 +38,6 @@ export default function EnrollmentsRoutes(app: Express, db: Database): void {
   };
 
   app.get("/api/users/:userId/enrollments", findEnrollmentsForUser);
-  app.post("/api/users/:userId/enrollments", enrollUserInCourse);
-  app.delete("/api/users/:userId/enrollments/:courseId", unEnrollUserFromCourse);
+  app.post("/api/users/:userId/courses/:courseId", enrollUserInCourse);
+  app.delete("/api/users/:userId/courses/:courseId", unEnrollUserFromCourse);
 }
