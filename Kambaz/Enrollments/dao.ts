@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import type { Database, Enrollment } from "../types.ts";
+import type { Database, Enrollment, User } from "../types.ts";
 
 export default function EnrollmentsDao(db: Database) {
   function findEnrollmentsForUser(userId: string): Enrollment[] {
@@ -19,5 +19,12 @@ export default function EnrollmentsDao(db: Database) {
     return db.enrollments;
   }
 
-  return { findEnrollmentsForUser, enrollUserInCourse, unEnrollUserFromCourse };
+  function findUsersForCourse(courseId: string): User[] {
+    return db.enrollments
+      .filter((e) => e.course === courseId)
+      .map((e) => db.users.find((u) => u._id === e.user))
+      .filter((u): u is User => u !== undefined);
+  }
+
+  return { findEnrollmentsForUser, enrollUserInCourse, unEnrollUserFromCourse, findUsersForCourse };
 }
