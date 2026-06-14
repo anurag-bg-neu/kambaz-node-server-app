@@ -1,25 +1,24 @@
 import type { Express, Request, Response } from "express";
-import type { Database } from "../types.ts";
 import AssignmentsDao from "./dao.ts";
 
-export default function AssignmentRoutes(app: Express, db: Database): void {
-  const dao = AssignmentsDao(db);
+export default function AssignmentRoutes(app: Express): void {
+  const dao = AssignmentsDao();
 
-  const findAssignmentsForCourse = (req: Request, res: Response): void => {
-    res.json(dao.findAssignmentsForCourse(req.params.courseId as string));
+  const findAssignmentsForCourse = async (req: Request, res: Response): Promise<void> => {
+    res.json(await dao.findAssignmentsForCourse(req.params.courseId as string));
   };
 
-  const createAssignmentForCourse = (req: Request, res: Response): void => {
+  const createAssignmentForCourse = async (req: Request, res: Response): Promise<void> => {
     const assignment = { ...req.body, course: req.params.courseId as string };
-    res.send(dao.createAssignment(assignment));
+    res.json(await dao.createAssignment(assignment));
   };
 
-  const updateAssignment = (req: Request, res: Response): void => {
-    res.send(dao.updateAssignment(req.params.assignmentId as string, req.body));
+  const updateAssignment = async (req: Request, res: Response): Promise<void> => {
+    res.json(await dao.updateAssignment(req.params.assignmentId as string, req.body));
   };
 
-  const deleteAssignment = (req: Request, res: Response): void => {
-    dao.deleteAssignment(req.params.assignmentId as string);
+  const deleteAssignment = async (req: Request, res: Response): Promise<void> => {
+    await dao.deleteAssignment(req.params.assignmentId as string);
     res.sendStatus(200);
   };
 

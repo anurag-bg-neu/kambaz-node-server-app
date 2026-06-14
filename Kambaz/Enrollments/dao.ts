@@ -1,30 +1,25 @@
 import { v4 as uuidv4 } from "uuid";
-import type { Database, Enrollment, User } from "../types.ts";
+import type { Enrollment, User } from "../types.ts";
+import EnrollmentModel from "./model.ts";
+import UserModel from "../Users/model.ts";
 
-export default function EnrollmentsDao(db: Database) {
-  function findEnrollmentsForUser(userId: string): Enrollment[] {
-    return db.enrollments.filter((e) => e.user === userId);
-  }
+export default function EnrollmentsDao() {
+  const findEnrollmentsForUser = (userId: string): Promise<Enrollment[]> =>
+    EnrollmentModel.find({ user: userId }).lean() as unknown as Promise<Enrollment[]>;
 
-  function enrollUserInCourse(userId: string, courseId: string): Enrollment {
-    const newEnrollment: Enrollment = { _id: uuidv4(), user: userId, course: courseId };
-    db.enrollments.push(newEnrollment);
-    return newEnrollment;
-  }
+  const enrollUserInCourse = async (userId: string, courseId: string): Promise<Enrollment> => {
+    const doc = new EnrollmentModel({ _id: uuidv4(), user: userId, course: courseId });
+    return (await doc.save()).toObject() as unknown as Enrollment;
+  };
 
-  function unEnrollUserFromCourse(userId: string, courseId: string): Enrollment[] {
-    db.enrollments = db.enrollments.filter(
-      (e) => !(e.user === userId && e.course === courseId)
-    );
-    return db.enrollments;
-  }
+  const unEnrollUserFromCourse = (userId: string, courseId: string) =>
+    EnrollmentModel.deleteMany({ user: userId, course: courseId });
 
-  function findUsersForCourse(courseId: string): User[] {
-    return db.enrollments
-      .filter((e) => e.course === courseId)
-      .map((e) => db.users.find((u) => u._id === e.user))
-      .filter((u): u is User => u !== undefined);
-  }
+  const findUsersForCourse = async (courseId: string): Promise<User[]> => {
+    const enrollments = await EnrollmentModel.find({ course: courseId }).lean();
+    const userIds = enrollments.map((e) => e.user as string);
+    return UserModel.find({ _id: { $in: userIds } }).lean() as unknown as User[];
+  };
 
   return { findEnrollmentsForUser, enrollUserInCourse, unEnrollUserFromCourse, findUsersForCourse };
 }

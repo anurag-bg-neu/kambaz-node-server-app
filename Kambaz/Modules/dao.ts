@@ -1,26 +1,20 @@
 import { v4 as uuidv4 } from "uuid";
-import type { Database, Module } from "../types.ts";
+import type { Module } from "../types.ts";
+import ModuleModel from "./model.ts";
 
-export default function ModulesDao(db: Database) {
-  function findModulesForCourse(courseId: string): Module[] {
-    return db.modules.filter((m) => m.course === courseId);
-  }
+export default function ModulesDao() {
+  const findModulesForCourse = (courseId: string): Promise<Module[]> =>
+    ModuleModel.find({ course: courseId }).lean() as unknown as Promise<Module[]>;
 
-  function createModule(module: Omit<Module, "_id">): Module {
-    const newModule: Module = { ...module, _id: uuidv4() };
-    db.modules = [...db.modules, newModule];
-    return newModule;
-  }
+  const createModule = async (module: Omit<Module, "_id">): Promise<Module> => {
+    const doc = new ModuleModel({ ...module, _id: uuidv4() });
+    return (await doc.save()).toObject() as unknown as Module;
+  };
 
-  function updateModule(moduleId: string, moduleUpdates: Partial<Module>): Module | undefined {
-    const module = db.modules.find((m) => m._id === moduleId);
-    if (module) Object.assign(module, moduleUpdates);
-    return module;
-  }
+  const updateModule = (moduleId: string, updates: Partial<Module>): Promise<Module | null> =>
+    ModuleModel.findByIdAndUpdate(moduleId, { $set: updates }, { new: true }).lean() as Promise<Module | null>;
 
-  function deleteModule(moduleId: string): void {
-    db.modules = db.modules.filter((m) => m._id !== moduleId);
-  }
+  const deleteModule = (moduleId: string) => ModuleModel.findByIdAndDelete(moduleId);
 
   return { findModulesForCourse, createModule, updateModule, deleteModule };
 }

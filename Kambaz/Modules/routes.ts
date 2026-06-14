@@ -1,25 +1,24 @@
 import type { Express, Request, Response } from "express";
-import type { Database } from "../types.ts";
 import ModulesDao from "./dao.ts";
 
-export default function ModulesRoutes(app: Express, db: Database): void {
-  const dao = ModulesDao(db);
+export default function ModulesRoutes(app: Express): void {
+  const dao = ModulesDao();
 
-  const findModulesForCourse = (req: Request, res: Response): void => {
-    res.json(dao.findModulesForCourse(req.params.courseId as string));
+  const findModulesForCourse = async (req: Request, res: Response): Promise<void> => {
+    res.json(await dao.findModulesForCourse(req.params.courseId as string));
   };
 
-  const createModuleForCourse = (req: Request, res: Response): void => {
+  const createModuleForCourse = async (req: Request, res: Response): Promise<void> => {
     const module = { ...req.body, course: req.params.courseId as string };
-    res.send(dao.createModule(module));
+    res.json(await dao.createModule(module));
   };
 
-  const updateModule = (req: Request, res: Response): void => {
-    res.send(dao.updateModule(req.params.moduleId as string, req.body));
+  const updateModule = async (req: Request, res: Response): Promise<void> => {
+    res.json(await dao.updateModule(req.params.moduleId as string, req.body));
   };
 
-  const deleteModule = (req: Request, res: Response): void => {
-    dao.deleteModule(req.params.moduleId as string);
+  const deleteModule = async (req: Request, res: Response): Promise<void> => {
+    await dao.deleteModule(req.params.moduleId as string);
     res.sendStatus(200);
   };
 

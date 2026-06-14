@@ -2,8 +2,8 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import session from "express-session";
+import mongoose from "mongoose";
 import type { User } from "./Kambaz/types.ts";
-import db from "./Kambaz/Database/index.ts";
 import Hello from "./Hello.ts";
 import Lab5 from "./Lab5/index.ts";
 import UserRoutes from "./Kambaz/Users/routes.ts";
@@ -17,6 +17,8 @@ declare module "express-session" {
     currentUser: User | null;
   }
 }
+
+mongoose.connect(process.env.MONGODB_URI || "mongodb://127.0.0.1/kambaz");
 
 const app = express();
 
@@ -45,11 +47,11 @@ if (process.env.SERVER_ENV !== "development") {
 app.use(session(sessionOptions));
 app.use(express.json());
 
-UserRoutes(app, db);
-CourseRoutes(app, db);
-ModulesRoutes(app, db);
-AssignmentsRoutes(app, db);
-EnrollmentsRoutes(app, db);
+UserRoutes(app);
+CourseRoutes(app);
+ModulesRoutes(app);
+AssignmentsRoutes(app);
+EnrollmentsRoutes(app);
 Lab5(app);
 Hello(app);
 
