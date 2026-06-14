@@ -5,10 +5,30 @@ import UsersDao from "./dao.ts";
 export default function UserRoutes(app: Express, db: Database): void {
   const dao = UsersDao(db);
 
-  const createUser = (_req: Request, _res: Response): void => {};
-  const deleteUser = (_req: Request, _res: Response): void => {};
-  const findAllUsers = (_req: Request, _res: Response): void => {};
-  const findUserById = (_req: Request, _res: Response): void => {};
+  const findAllUsers = (req: Request, res: Response): void => {
+    const role = req.query.role as string | undefined;
+    const name = req.query.name as string | undefined;
+    if (role) { res.json(dao.findUsersByRole(role)); return; }
+    if (name) { res.json(dao.findUsersByPartialName(name)); return; }
+    res.json(dao.findAllUsers());
+  };
+
+  const findUserById = (req: Request, res: Response): void => {
+    const user = dao.findUserById(req.params.userId as string);
+    if (!user) { res.sendStatus(404); return; }
+    res.json(user);
+  };
+
+  const createUser = (req: Request, res: Response): void => {
+    const existing = dao.findUserByUsername(req.body.username);
+    if (existing) { res.status(400).json({ message: "Username already in use" }); return; }
+    res.json(dao.createUser(req.body));
+  };
+
+  const deleteUser = (req: Request, res: Response): void => {
+    dao.deleteUser(req.params.userId as string);
+    res.sendStatus(200);
+  };
 
   const updateUser = (req: Request, res: Response): void => {
     const userId = req.params.userId as string;
