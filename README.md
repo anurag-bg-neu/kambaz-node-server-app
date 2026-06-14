@@ -3,7 +3,7 @@
 ![Node.js](https://img.shields.io/badge/Node.js-22.x-339933?logo=node.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-5.x-000000?logo=express&logoColor=white)
-![License](https://img.shields.io/badge/License-ISC-blue.svg)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
 REST API backend for **Kambaz** — a full-stack Learning Management System built for Northeastern University's CS5610 Web Development course.
 
@@ -127,4 +127,4 @@ npm run build    # tsc --noEmit — type check only
 
 ## License
 
-ISC © [Anurag Bheemappa Gnanamurthy](https://github.com/anurag-bg-neu)
+MIT © [Anurag Bheemappa Gnanamurthy](https://github.com/anurag-bg-neu)
