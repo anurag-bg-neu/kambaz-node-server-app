@@ -1,51 +1,42 @@
 import { v4 as uuidv4 } from "uuid";
-import type { Database, User } from "../types.ts";
+import type { User } from "../types.ts";
+import UserModel from "./model.ts";
 
-export default function UsersDao(db: Database) {
-  let { users } = db;
+export default function UsersDao() {
+  const findAllUsers = (): Promise<User[]> =>
+    UserModel.find().lean() as unknown as Promise<User[]>;
 
-  const createUser = (user: Omit<User, "_id">): User => {
-    const newUser: User = { ...user, _id: uuidv4() } as User;
-    users = [...users, newUser];
-    db.users = users;
-    return newUser;
+  const findUserById = (userId: string): Promise<User | null> =>
+    UserModel.findById(userId).lean() as Promise<User | null>;
+
+  const findUsersByRole = (role: string): Promise<User[]> =>
+    UserModel.find({ role }).lean() as unknown as Promise<User[]>;
+
+  const findUsersByPartialName = (partialName: string): Promise<User[]> => {
+    const regex = new RegExp(partialName, "i");
+    return UserModel.find({
+      $or: [{ firstName: regex }, { lastName: regex }],
+    }).lean() as unknown as Promise<User[]>;
   };
 
-  const findAllUsers = (): User[] => users;
+  const findUserByUsername = (username: string): Promise<User | null> =>
+    UserModel.findOne({ username }).lean() as Promise<User | null>;
 
-  const findUserById = (userId: string): User | undefined =>
-    users.find((user) => user._id === userId);
+  const findUserByCredentials = (username: string, password: string): Promise<User | null> =>
+    UserModel.findOne({ username, password }).lean() as Promise<User | null>;
 
-  const findUserByUsername = (username: string): User | undefined =>
-    users.find((user) => user.username === username);
-
-  const findUserByCredentials = (username: string, password: string): User | undefined =>
-    users.find((user) => user.username === username && user.password === password);
-
-  const findUsersByRole = (role: string): User[] =>
-    users.filter((u) => u.role === role);
-
-  const findUsersByPartialName = (partialName: string): User[] => {
-    const q = partialName.toLowerCase();
-    return users.filter(
-      (u) =>
-        u.firstName.toLowerCase().includes(q) ||
-        u.lastName.toLowerCase().includes(q)
-    );
+  const createUser = async (user: Omit<User, "_id">): Promise<User> => {
+    const doc = new UserModel({ ...user, _id: uuidv4() });
+    return (await doc.save()).toObject() as unknown as User;
   };
 
-  const updateUser = (userId: string, user: User): void => {
-    users = users.map((u) => (u._id === userId ? user : u));
-    db.users = users;
-  };
+  const updateUser = (userId: string, updates: Partial<User>): Promise<User | null> =>
+    UserModel.findByIdAndUpdate(userId, { $set: updates }, { new: true }).lean() as Promise<User | null>;
 
-  const deleteUser = (userId: string): void => {
-    users = users.filter((u) => u._id !== userId);
-    db.users = users;
-  };
+  const deleteUser = (userId: string) => UserModel.findByIdAndDelete(userId);
 
   return {
-    createUser, findAllUsers, findUserById, findUsersByRole, findUsersByPartialName,
-    findUserByUsername, findUserByCredentials, updateUser, deleteUser,
+    findAllUsers, findUserById, findUsersByRole, findUsersByPartialName,
+    findUserByUsername, findUserByCredentials, createUser, updateUser, deleteUser,
   };
 }

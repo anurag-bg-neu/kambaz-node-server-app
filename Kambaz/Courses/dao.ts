@@ -1,34 +1,30 @@
 import { v4 as uuidv4 } from "uuid";
-import type { Course, Database } from "../types.ts";
+import type { Course } from "../types.ts";
+import CourseModel from "./model.ts";
+import EnrollmentModel from "../Enrollments/model.ts";
 
-export default function CoursesDao(db: Database) {
-  function findCoursesForEnrolledUser(userId: string): Course[] {
-    const { courses, enrollments } = db;
-    return courses.filter((course) =>
-      enrollments.some((e) => e.user === userId && e.course === course._id)
-    );
-  }
+export default function CoursesDao() {
+  const findAllCourses = (): Promise<Course[]> =>
+    CourseModel.find().lean() as unknown as Promise<Course[]>;
 
-  function findAllCourses(): Course[] {
-    return db.courses;
-  }
+  const findCoursesForEnrolledUser = async (userId: string): Promise<Course[]> => {
+    const enrollments = await EnrollmentModel.find({ user: userId }).lean();
+    const courseIds = enrollments.map((e) => e.course as string);
+    return CourseModel.find({ _id: { $in: courseIds } }).lean() as unknown as Promise<Course[]>;
+  };
 
-  function createCourse(course: Omit<Course, "_id">): Course {
-    const newCourse: Course = { ...course, _id: uuidv4() };
-    db.courses = [...db.courses, newCourse];
-    return newCourse;
-  }
+  const createCourse = async (course: Omit<Course, "_id">): Promise<Course> => {
+    const doc = new CourseModel({ ...course, _id: uuidv4() });
+    return (await doc.save()).toObject() as unknown as Course;
+  };
 
-  function updateCourse(courseId: string, courseUpdates: Partial<Course>): Course | undefined {
-    const course = db.courses.find((c) => c._id === courseId);
-    if (course) Object.assign(course, courseUpdates);
-    return course;
-  }
+  const updateCourse = (courseId: string, updates: Partial<Course>): Promise<Course | null> =>
+    CourseModel.findByIdAndUpdate(courseId, { $set: updates }, { new: true }).lean() as Promise<Course | null>;
 
-  function deleteCourse(courseId: string): void {
-    db.courses = db.courses.filter((c) => c._id !== courseId);
-    db.enrollments = db.enrollments.filter((e) => e.course !== courseId);
-  }
+  const deleteCourse = async (courseId: string): Promise<void> => {
+    await CourseModel.findByIdAndDelete(courseId);
+    await EnrollmentModel.deleteMany({ course: courseId });
+  };
 
   return { findAllCourses, findCoursesForEnrolledUser, createCourse, updateCourse, deleteCourse };
 }
