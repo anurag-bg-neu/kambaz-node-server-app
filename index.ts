@@ -18,7 +18,7 @@ declare module "express-session" {
   }
 }
 
-mongoose.connect(process.env.MONGODB_URI || "mongodb://127.0.0.1/kambaz");
+mongoose.connect(process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1/kambaz");
 
 const app = express();
 
