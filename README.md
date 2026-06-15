@@ -5,9 +5,9 @@
 ![Express](https://img.shields.io/badge/Express-5.x-000000?logo=express&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
-> **Live API →** <https://kambaz-node-server-app-tgaq.onrender.com>
+> **Live Server APP →** <https://kambaz-node-server-app-tgaq.onrender.com>
 
-REST API backend for **Kambaz** — a full-stack Learning Management System built for Northeastern University's CS5610 Web Development course.
+REST API backend for **Kambaz** — a full-stack web application built to simulate an Online Learning Management System.
 
 ## Features
 
@@ -44,7 +44,7 @@ npm run dev          # tsx watch index.ts — hot reload on http://localhost:400
 
 ## Production Deployment
 
-Deployed on **Render** (free tier) at <https://kambaz-node-server-app-tgaq.onrender.com>. On each push to `main`, Render runs:
+Deployed on **Render** (free tier) at [Kambaz Server App](https://kambaz-node-server-app-tgaq.onrender.com). On each push to `main`, Render runs:
 
 | Step  | Command                      |
 |-------|------------------------------|
