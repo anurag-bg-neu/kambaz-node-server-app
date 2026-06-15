@@ -40,7 +40,7 @@ npm install
 npm run dev          # tsx watch index.ts — hot reload on http://localhost:4000
 ```
 
-> Requires Node.js 18+ and [Kambaz Client](https://anurag-bg-kambaz.vercel.app) running on `http://localhost:3000`. No database needed for local dev — data is seeded in-memory.
+> Requires Node.js 18+ and [Kambaz Client](https://github.com/anurag-bg-neu/kambaz-next-js) running on `http://localhost:3000`.
 
 ## Production Deployment
 
