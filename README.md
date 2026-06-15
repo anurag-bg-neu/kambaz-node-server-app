@@ -7,7 +7,7 @@
 
 > **Live Server APP →** <https://kambaz-node-server-app-tgaq.onrender.com>
 
-REST API backend for **Kambaz** — a full-stack web application built to simulate an Online Learning Management System.
+NodeJS & RestAPI backend for **Kambaz** — a full-stack web application built to simulate an Online Learning Management System.
 
 ## Features
 
