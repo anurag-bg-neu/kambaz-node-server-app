@@ -57,13 +57,14 @@ Deployed on **Render** (free tier) at <https://kambaz-node-server-app-tgaq.onren
 
 Copy `.env` and adjust as needed:
 
-| Variable         | Default                 | Description                      |
-|------------------|-------------------------|----------------------------------|
-| `PORT`           | `4000`                  | Server port                      |
-| `CLIENT_URL`     | `http://localhost:3000` | Allowed CORS origin              |
-| `SESSION_SECRET` | `kambaz`                | express-session secret           |
-| `SERVER_ENV`     | `development`           | `development` skips HTTPS cookie |
-| `SERVER_URL`     | —                       | Cookie domain (production)       |
+| Variable                     | Default                            | Description                      |
+|------------------------------|------------------------------------|----------------------------------|
+| `PORT`                       | `4000`                             | Server port                      |
+| `CLIENT_URL`                 | `http://localhost:3000`            | Allowed CORS origin              |
+| `SESSION_SECRET`             | `kambaz`                           | express-session secret           |
+| `SERVER_ENV`                 | `development`                      | `development` skips HTTPS cookie |
+| `SERVER_URL`                 | —                                  | Cookie domain (production)       |
+| `DATABASE_CONNECTION_STRING` | `mongodb://127.0.0.1:27017/kambaz` | Database Connection URI          |
 
 ## API Reference
 
