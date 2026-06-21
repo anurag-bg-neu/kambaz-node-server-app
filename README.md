@@ -44,7 +44,7 @@ npm run dev          # tsx watch index.ts — hot reload on http://localhost:400
 
 ## Production Deployment
 
-Deployed on **Render** (free tier) at [Kambaz Server App](https://kambaz-node-server-app-tgaq.onrender.com). On each push to `main`, Render runs:
+Deployed on **Render** (free tier) at [Live Kambaz Server](https://kambaz-node-server-app-tgaq.onrender.com). On each push to `main`, Render runs:
 
 | Step  | Command                      |
 |-------|------------------------------|
